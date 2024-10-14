@@ -42,3 +42,8 @@ abercrombieJSON = requests.get("https://data.sec.gov/api/xbrl/companyfacts/CIK00
 test2 = abercrombieJSON.json()
 for key in test2.keys():
     print(key)
+
+print("\n-----------------------------------------------------------\n")
+
+for fact in test2['facts']['us-gaap']:
+    print(fact)
