@@ -4,44 +4,8 @@ import os
 import pandas as pd
 import requests
 import json
+from IPython.display import display
 # from xbrl import XBRLParser
-
-os.environ['MD_AUTH_TOKEN'] = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1EY3hOemRHTnpGRFJrSTRPRGswTmtaRU1FSkdOekl5TXpORFJrUTROemd6TWtOR016bEdOdyJ9.eyJodHRwczovL21vcm5pbmdzdGFyLmNvbS9lbWFpbCI6ImludmVzdEByYWRmb3JkLmVkdSIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL3JvbGUiOlsiUGVyc29uYS5EaXJlY3RGb3JBc3NldE1hbmFnZW1lbnQiLCJFbmFibGVkIEFuYWx5dGljcyBMYWIgRGVsaXZlcnkgTm90ZWJvb2tzIiwiRGlzYWJsZSBEZWZpbmVkIENvbnRyaWJ1dGlvbiBQbGFucyIsIlBvcnRmb2xpbyBBbmFseXNpcyBVc2VyIl0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2NvbXBhbnlfaWQiOiIxMWZjMjA1MC01YmFhLTQzOTYtODI3ZS0xNzRlNzk4MDJlODkiLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9pbnRlcm5hbF9jb21wYW55X2lkIjoiQ2xpZW50MCIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2RhdGFfcm9sZSI6W10sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2xlZ2FjeV9jb21wYW55X2lkIjoiMTFmYzIwNTAtNWJhYS00Mzk2LTgyN2UtMTc0ZTc5ODAyZTg5IiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcm9sZV9pZCI6WyI3OGJhMWFlNy0xZWUzLTQ0YTAtYTAxOC0wOGM1NThmZWNmMTciLCI4MjYyOWNkMC1kZjgwLTRlNWMtYjNiYS02YmQyNWU5MzBhNDIiLCJkYzMxN2Q5OC0xMTAwLTQyM2YtOTUzZi1mZjRkYjc4MzUwMTgiXSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcHJvZHVjdCI6WyJESVJFQ1QiLCJQUyJdLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9jb21wYW55IjpbeyJpZCI6IjExZmMyMDUwLTViYWEtNDM5Ni04MjdlLTE3NGU3OTgwMmU4OSIsInByb2R1Y3QiOiJESVJFQ1QifV0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL21zdGFyX2lkIjoiQUU1RTJFN0YtNUE1QS00RUQ5LUFEQUQtNTE4MDUzQTBDQ0NBIiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9wYXNzd29yZENoYW5nZVJlcXVpcmVkIjpmYWxzZSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vdWltX3JvbGVzIjoiRUFNUyxNRF9NRU1CRVJfMV8xLERPVF9DT01fRlJFRSxESVJFQ1QiLCJpc3MiOiJodHRwczovL2xvZ2luLXByb2QubW9ybmluZ3N0YXIuY29tLyIsInN1YiI6ImF1dGgwfEFFNUUyRTdGLTVBNUEtNEVEOS1BREFELTUxODA1M0EwQ0NDQSIsImF1ZCI6WyJodHRwczovL3VpbS1wcm9kLm1vcm5pbmdzdGFyLmF1dGgwLmNvbS9hcGkvdjIvIiwiaHR0cHM6Ly91aW0tcHJvZC5tb3JuaW5nc3Rhci5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzI4OTI1NDUxLCJleHAiOjE3MjkwMTE4NTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJDaGVLTTR1ajhqUFQ2MGFVMkk0Y1BsSDhyREtkT3NaZCJ9.FNq38iFc_cgEZT-LTa2N4nodfpZNZcz9MyAkYiwRUGBdqV-9oA7TpUA3CUSseR4jM6S-HX5ePi5ye9ieMetpr2uRI3-0KRLjZSq-BaXP9ldzjC7x_qzGHFFSPsodHfTKYpzrICJ6shU1yGusMpCX80wEgIYnywdk46jUEWStqcggqPAM9m04Vlaltcl48f1Kp6fprghGQe0ACr4Jw52Rtcroji73fRcw8wselCSC12JF2mEQqT-8yXpfeNSPYtenUr7jdMEtbrzFKYxVOWcKM2RiRmo3ktuDSn7RE2qc-XEY7yqZ2GAM9JodnIB5XRFP_lclPGVF_y4yEy0Payvt7Q"
-
-# Display all rows and all columns of DataFrame objects when printing
-pd.set_option('display.max_columns',None)
-pd.set_option('display.max_rows',None)
-
-# md.connect()
-
-# data = md.get_data("ANF")
-
-# test = md.direct.user_items.get_data_set_details("0218-0440")
-morningstar_data_sets = md.direct.get_morningstar_data_sets()
-list_of_tests = ["0218-0020","0218-1203","0218-0497","0218-0450","0218-0498","0218-0499","0218-0981","0218-0982","0218-0985","0218-0983","0218-0503","0218-0984","0218-0500","0218-0494","0218-1201","0218-0502","0218-0526","0218-0501","0218-0504","0218-0490","0218-0491","0218-0492","0218-0493","0218-0495","0218-0511","0218-0512","0218-0513","0218-0472","0218-0480","0218-0034","0218-0036","0218-0037","0218-0038","0218-0039","0218-0260","0218-0261","0218-0292","0218-0041","0218-0043","0218-0044","0218-0045","0593-0255","0218-0253","0218-0102","0218-0047","0218-0353","0218-0048","0218-0049","0218-0050","0218-0051","0218-0035","0218-0052","0218-0053","0218-0300","0218-0418","0218-0420","0218-0432","0218-0422","0218-0514","0218-0485","0218-0468","0218-0483","0218-0473","0218-0470","0218-0430","0218-0424","0218-0434","0218-0426","0218-0438","0218-0986","0218-0428","0218-0054","0218-0323","0218-0324","0218-0325","0218-0326","0218-0078","0218-0227","0218-0056","0218-0520","0218-0057","0218-0309","0218-0442","0218-0444","0218-0058"]
-
-new_list = []
-new_dict = {}
-for string in list_of_tests:
-    current_dataset = md.direct.user_items.get_data_set_details(string)
-    # new_list.append(current_dataset)
-    for i in range(0, len(current_dataset['displayName'])):
-        new_dict[current_dataset['displayName'][i]] = current_dataset['datapointId'][i]
-    # print(md.direct.user_items.get_data_set_details(string))
-
-# for frame in new_list:
-#     print(frame['datapointId'] + "    " + frame['displayName'])
-
-
-# write to a file
-f = open("idList.txt", "w")
-for key in new_dict.keys():
-    # print(new_dict[key] + " :     " + key)
-    f.write(new_dict[key] + " :     " + key + "\n")
-
-f.close()
-
-
 
 # 0   "0218,0020,"                                           Snapshot
 # 1   "0218-1203,"  Sustainable Investing: Low Carbon Transition M...
@@ -132,6 +96,45 @@ f.close()
 # 86  "0218-0103,"                        Fees Schedule and Breakdown
 # 87  0218-0440,"                                         Risk Model
 
+os.environ['MD_AUTH_TOKEN'] = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1EY3hOemRHTnpGRFJrSTRPRGswTmtaRU1FSkdOekl5TXpORFJrUTROemd6TWtOR016bEdOdyJ9.eyJodHRwczovL21vcm5pbmdzdGFyLmNvbS9lbWFpbCI6ImludmVzdEByYWRmb3JkLmVkdSIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL3JvbGUiOlsiUGVyc29uYS5EaXJlY3RGb3JBc3NldE1hbmFnZW1lbnQiLCJFbmFibGVkIEFuYWx5dGljcyBMYWIgRGVsaXZlcnkgTm90ZWJvb2tzIiwiRGlzYWJsZSBEZWZpbmVkIENvbnRyaWJ1dGlvbiBQbGFucyIsIlBvcnRmb2xpbyBBbmFseXNpcyBVc2VyIl0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2NvbXBhbnlfaWQiOiIxMWZjMjA1MC01YmFhLTQzOTYtODI3ZS0xNzRlNzk4MDJlODkiLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9pbnRlcm5hbF9jb21wYW55X2lkIjoiQ2xpZW50MCIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2RhdGFfcm9sZSI6W10sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2xlZ2FjeV9jb21wYW55X2lkIjoiMTFmYzIwNTAtNWJhYS00Mzk2LTgyN2UtMTc0ZTc5ODAyZTg5IiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcm9sZV9pZCI6WyI3OGJhMWFlNy0xZWUzLTQ0YTAtYTAxOC0wOGM1NThmZWNmMTciLCI4MjYyOWNkMC1kZjgwLTRlNWMtYjNiYS02YmQyNWU5MzBhNDIiLCJkYzMxN2Q5OC0xMTAwLTQyM2YtOTUzZi1mZjRkYjc4MzUwMTgiXSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcHJvZHVjdCI6WyJESVJFQ1QiLCJQUyJdLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9jb21wYW55IjpbeyJpZCI6IjExZmMyMDUwLTViYWEtNDM5Ni04MjdlLTE3NGU3OTgwMmU4OSIsInByb2R1Y3QiOiJESVJFQ1QifV0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL21zdGFyX2lkIjoiQUU1RTJFN0YtNUE1QS00RUQ5LUFEQUQtNTE4MDUzQTBDQ0NBIiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9wYXNzd29yZENoYW5nZVJlcXVpcmVkIjpmYWxzZSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vdWltX3JvbGVzIjoiRUFNUyxNRF9NRU1CRVJfMV8xLERPVF9DT01fRlJFRSxESVJFQ1QiLCJpc3MiOiJodHRwczovL2xvZ2luLXByb2QubW9ybmluZ3N0YXIuY29tLyIsInN1YiI6ImF1dGgwfEFFNUUyRTdGLTVBNUEtNEVEOS1BREFELTUxODA1M0EwQ0NDQSIsImF1ZCI6WyJodHRwczovL3VpbS1wcm9kLm1vcm5pbmdzdGFyLmF1dGgwLmNvbS9hcGkvdjIvIiwiaHR0cHM6Ly91aW0tcHJvZC5tb3JuaW5nc3Rhci5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzI4OTI1NDUxLCJleHAiOjE3MjkwMTE4NTEsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJDaGVLTTR1ajhqUFQ2MGFVMkk0Y1BsSDhyREtkT3NaZCJ9.FNq38iFc_cgEZT-LTa2N4nodfpZNZcz9MyAkYiwRUGBdqV-9oA7TpUA3CUSseR4jM6S-HX5ePi5ye9ieMetpr2uRI3-0KRLjZSq-BaXP9ldzjC7x_qzGHFFSPsodHfTKYpzrICJ6shU1yGusMpCX80wEgIYnywdk46jUEWStqcggqPAM9m04Vlaltcl48f1Kp6fprghGQe0ACr4Jw52Rtcroji73fRcw8wselCSC12JF2mEQqT-8yXpfeNSPYtenUr7jdMEtbrzFKYxVOWcKM2RiRmo3ktuDSn7RE2qc-XEY7yqZ2GAM9JodnIB5XRFP_lclPGVF_y4yEy0Payvt7Q"
+
+# Display all rows and all columns of DataFrame objects when printing
+pd.set_option('display.max_columns',None)
+pd.set_option('display.max_rows',None)
+pd.set_option('display.precision',3)
+
+# md.connect()
+
+# data = md.get_data("ANF")
+
+# test = md.direct.user_items.get_data_set_details("0218-0440")
+morningstar_data_sets = md.direct.get_morningstar_data_sets()
+
+# 
+# list_of_tests = ["0218-0020","0218-1203","0218-0497","0218-0450","0218-0498","0218-0499","0218-0981","0218-0982","0218-0985","0218-0983","0218-0503","0218-0984","0218-0500","0218-0494","0218-1201","0218-0502","0218-0526","0218-0501","0218-0504","0218-0490","0218-0491","0218-0492","0218-0493","0218-0495","0218-0511","0218-0512","0218-0513","0218-0472","0218-0480","0218-0034","0218-0036","0218-0037","0218-0038","0218-0039","0218-0260","0218-0261","0218-0292","0218-0041","0218-0043","0218-0044","0218-0045","0593-0255","0218-0253","0218-0102","0218-0047","0218-0353","0218-0048","0218-0049","0218-0050","0218-0051","0218-0035","0218-0052","0218-0053","0218-0300","0218-0418","0218-0420","0218-0432","0218-0422","0218-0514","0218-0485","0218-0468","0218-0483","0218-0473","0218-0470","0218-0430","0218-0424","0218-0434","0218-0426","0218-0438","0218-0986","0218-0428","0218-0054","0218-0323","0218-0324","0218-0325","0218-0326","0218-0078","0218-0227","0218-0056","0218-0520","0218-0057","0218-0309","0218-0442","0218-0444","0218-0058"]
+# new_list = []
+# new_dict = {}
+# for string in list_of_tests:
+#     current_dataset = md.direct.user_items.get_data_set_details(string)
+    # new_list.append(current_dataset)
+    # for i in range(0, len(current_dataset['displayName'])):
+    #     new_dict[current_dataset['displayName'][i]] = current_dataset['datapointId'][i]
+    # print(md.direct.user_items.get_data_set_details(string))
+
+# for frame in new_list:
+#     print(frame['datapointId'] + "    " + frame['displayName'])
+
+
+# write to a file
+# f = open("idList.txt", "w")
+# for key in new_dict.keys():
+#     # print(new_dict[key] + " :     " + key)
+#     f.write(new_dict[key] + " :     " + key + "\n")
+
+# f.close()
+
+
+
 # shows saved search criteria associated with our Morningstar account
 data = md.direct.user_items.get_search_criteria()
 
@@ -149,13 +152,20 @@ datapoint_ids = [
     {"datapointId": "OS01W"}, # Name
     {"datapointId": "OS385"}, # Ticker
     # {"datapointId": "LF035"}, # Group?
-    # {"datapointId": "OS01W"},
+    {
+        "datapointId": "HS05X",
+        "startDate": "2024-08-30",
+        "endDate": "2024-10-30"
+     }, # P/E
+    # {"datapointId": "HS05V"}, # P/B
+    # {"datapointId": "HS05U"}, # P/S
 ]
 
-criteria = md.direct.user_items.get_search_criteria_conditions(search_criteria_id=data['id'][18])
+# 17 is my search criteria...18 is from Fall 2023
+criteria = md.direct.user_items.get_search_criteria_conditions(search_criteria_id=data['id'][17])
 
 data = md.direct.get_investment_data(investments=criteria, data_points=datapoint_ids)
-# print(data)
+display(data.to_string())
 
 # abercrombie = md.direct.lookup.companies('Ford Motor')
 
