@@ -1,14 +1,14 @@
 import streamlit as st
-import morningstar_data as md
+# import morningstar_data as md
 # import os
 import pandas as pd
 # import requests
 # import json
-from IPython.display import display
+# from IPython.display import display
 # from xbrl import XBRLParser
 import yfinance as yf
 import pprint
-import openpyxl
+# import openpyxl
 
 """
 # This is a list of searches offered by Morningstar...used this list to assist in getting ids for each datapoint since I could not find them online ANYWHERE
