@@ -1,14 +1,16 @@
 import streamlit as st
 import morningstar_data as md
-import os
+# import os
 import pandas as pd
 # import requests
-import json
+# import json
 from IPython.display import display
 # from xbrl import XBRLParser
 import yfinance as yf
 import pprint
+import openpyxl
 
+"""
 # This is a list of searches offered by Morningstar...used this list to assist in getting ids for each datapoint since I could not find them online ANYWHERE
 # 0   "0218,0020,"                                           Snapshot
 # 1   "0218-1203,"  Sustainable Investing: Low Carbon Transition M...
@@ -98,14 +100,16 @@ import pprint
 # 85  "0218-0058,"                                  Fees and Expenses
 # 86  "0218-0103,"                        Fees Schedule and Breakdown
 # 87  0218-0440,"                                         Risk Model
+"""
 
-os.environ['MD_AUTH_TOKEN'] = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1EY3hOemRHTnpGRFJrSTRPRGswTmtaRU1FSkdOekl5TXpORFJrUTROemd6TWtOR016bEdOdyJ9.eyJodHRwczovL21vcm5pbmdzdGFyLmNvbS9lbWFpbCI6ImludmVzdEByYWRmb3JkLmVkdSIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL3JvbGUiOlsiUGVyc29uYS5EaXJlY3RGb3JBc3NldE1hbmFnZW1lbnQiLCJFbmFibGVkIEFuYWx5dGljcyBMYWIgRGVsaXZlcnkgTm90ZWJvb2tzIiwiRGlzYWJsZSBEZWZpbmVkIENvbnRyaWJ1dGlvbiBQbGFucyIsIlBvcnRmb2xpbyBBbmFseXNpcyBVc2VyIl0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2NvbXBhbnlfaWQiOiIxMWZjMjA1MC01YmFhLTQzOTYtODI3ZS0xNzRlNzk4MDJlODkiLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9pbnRlcm5hbF9jb21wYW55X2lkIjoiQ2xpZW50MCIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2RhdGFfcm9sZSI6W10sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2xlZ2FjeV9jb21wYW55X2lkIjoiMTFmYzIwNTAtNWJhYS00Mzk2LTgyN2UtMTc0ZTc5ODAyZTg5IiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcm9sZV9pZCI6WyI3OGJhMWFlNy0xZWUzLTQ0YTAtYTAxOC0wOGM1NThmZWNmMTciLCI4MjYyOWNkMC1kZjgwLTRlNWMtYjNiYS02YmQyNWU5MzBhNDIiLCJkYzMxN2Q5OC0xMTAwLTQyM2YtOTUzZi1mZjRkYjc4MzUwMTgiXSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcHJvZHVjdCI6WyJESVJFQ1QiLCJQUyJdLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9jb21wYW55IjpbeyJpZCI6IjExZmMyMDUwLTViYWEtNDM5Ni04MjdlLTE3NGU3OTgwMmU4OSIsInByb2R1Y3QiOiJESVJFQ1QifV0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL21zdGFyX2lkIjoiQUU1RTJFN0YtNUE1QS00RUQ5LUFEQUQtNTE4MDUzQTBDQ0NBIiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9wYXNzd29yZENoYW5nZVJlcXVpcmVkIjpmYWxzZSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vdWltX3JvbGVzIjoiRUFNUyxNRF9NRU1CRVJfMV8xLERPVF9DT01fRlJFRSxESVJFQ1QiLCJpc3MiOiJodHRwczovL2xvZ2luLXByb2QubW9ybmluZ3N0YXIuY29tLyIsInN1YiI6ImF1dGgwfEFFNUUyRTdGLTVBNUEtNEVEOS1BREFELTUxODA1M0EwQ0NDQSIsImF1ZCI6WyJodHRwczovL3VpbS1wcm9kLm1vcm5pbmdzdGFyLmF1dGgwLmNvbS9hcGkvdjIvIiwiaHR0cHM6Ly91aW0tcHJvZC5tb3JuaW5nc3Rhci5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzI5MDIxMjM2LCJleHAiOjE3MjkxMDc2MzYsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJDaGVLTTR1ajhqUFQ2MGFVMkk0Y1BsSDhyREtkT3NaZCJ9.tVXP0O4b_7ezBEvVp9yIaAitUbN0w6Nz8TLWUAixeVDhfv8RSgpWwPvGTnEkTrTHrQ7yu9uOka07Y7TsQBA8FUhJdayM4h7VrlN2Vfdax7tJv1-GbRuQLg7bXqcHQJsz9RIh0uSBKX9GSdykpsczSH0_5k_G35PjqGJDDlz5YybQGJaXd8ryenWDX-bab1XGAg8jBZGlGHOPHuYBGi01_z9IT98ha1GpegQZOXmAWjGV2D20rgpOp8Nlr7QJXWX1eG-O36320C8NK-55lpjXGKgebfk7-Ce1RQsCowTguaakErELaXG7hdcpXfN4uEVzqqbMORxG8noEoMnKhW9Dkg"
+# os.environ['MD_AUTH_TOKEN'] = "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCIsImtpZCI6Ik1EY3hOemRHTnpGRFJrSTRPRGswTmtaRU1FSkdOekl5TXpORFJrUTROemd6TWtOR016bEdOdyJ9.eyJodHRwczovL21vcm5pbmdzdGFyLmNvbS9lbWFpbCI6ImludmVzdEByYWRmb3JkLmVkdSIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL3JvbGUiOlsiUGVyc29uYS5EaXJlY3RGb3JBc3NldE1hbmFnZW1lbnQiLCJFbmFibGVkIEFuYWx5dGljcyBMYWIgRGVsaXZlcnkgTm90ZWJvb2tzIiwiRGlzYWJsZSBEZWZpbmVkIENvbnRyaWJ1dGlvbiBQbGFucyIsIlBvcnRmb2xpbyBBbmFseXNpcyBVc2VyIl0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2NvbXBhbnlfaWQiOiIxMWZjMjA1MC01YmFhLTQzOTYtODI3ZS0xNzRlNzk4MDJlODkiLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9pbnRlcm5hbF9jb21wYW55X2lkIjoiQ2xpZW50MCIsImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2RhdGFfcm9sZSI6W10sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL2xlZ2FjeV9jb21wYW55X2lkIjoiMTFmYzIwNTAtNWJhYS00Mzk2LTgyN2UtMTc0ZTc5ODAyZTg5IiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcm9sZV9pZCI6WyI3OGJhMWFlNy0xZWUzLTQ0YTAtYTAxOC0wOGM1NThmZWNmMTciLCI4MjYyOWNkMC1kZjgwLTRlNWMtYjNiYS02YmQyNWU5MzBhNDIiLCJkYzMxN2Q5OC0xMTAwLTQyM2YtOTUzZi1mZjRkYjc4MzUwMTgiXSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vcHJvZHVjdCI6WyJESVJFQ1QiLCJQUyJdLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9jb21wYW55IjpbeyJpZCI6IjExZmMyMDUwLTViYWEtNDM5Ni04MjdlLTE3NGU3OTgwMmU4OSIsInByb2R1Y3QiOiJESVJFQ1QifV0sImh0dHBzOi8vbW9ybmluZ3N0YXIuY29tL21zdGFyX2lkIjoiQUU1RTJFN0YtNUE1QS00RUQ5LUFEQUQtNTE4MDUzQTBDQ0NBIiwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJodHRwczovL21vcm5pbmdzdGFyLmNvbS9wYXNzd29yZENoYW5nZVJlcXVpcmVkIjpmYWxzZSwiaHR0cHM6Ly9tb3JuaW5nc3Rhci5jb20vdWltX3JvbGVzIjoiRUFNUyxNRF9NRU1CRVJfMV8xLERPVF9DT01fRlJFRSxESVJFQ1QiLCJpc3MiOiJodHRwczovL2xvZ2luLXByb2QubW9ybmluZ3N0YXIuY29tLyIsInN1YiI6ImF1dGgwfEFFNUUyRTdGLTVBNUEtNEVEOS1BREFELTUxODA1M0EwQ0NDQSIsImF1ZCI6WyJodHRwczovL3VpbS1wcm9kLm1vcm5pbmdzdGFyLmF1dGgwLmNvbS9hcGkvdjIvIiwiaHR0cHM6Ly91aW0tcHJvZC5tb3JuaW5nc3Rhci5hdXRoMC5jb20vdXNlcmluZm8iXSwiaWF0IjoxNzI5MDIxMjM2LCJleHAiOjE3MjkxMDc2MzYsInNjb3BlIjoib3BlbmlkIHByb2ZpbGUgZW1haWwgb2ZmbGluZV9hY2Nlc3MiLCJhenAiOiJDaGVLTTR1ajhqUFQ2MGFVMkk0Y1BsSDhyREtkT3NaZCJ9.tVXP0O4b_7ezBEvVp9yIaAitUbN0w6Nz8TLWUAixeVDhfv8RSgpWwPvGTnEkTrTHrQ7yu9uOka07Y7TsQBA8FUhJdayM4h7VrlN2Vfdax7tJv1-GbRuQLg7bXqcHQJsz9RIh0uSBKX9GSdykpsczSH0_5k_G35PjqGJDDlz5YybQGJaXd8ryenWDX-bab1XGAg8jBZGlGHOPHuYBGi01_z9IT98ha1GpegQZOXmAWjGV2D20rgpOp8Nlr7QJXWX1eG-O36320C8NK-55lpjXGKgebfk7-Ce1RQsCowTguaakErELaXG7hdcpXfN4uEVzqqbMORxG8noEoMnKhW9Dkg"
 
 # Display all rows and all columns of DataFrame objects when printing
 pd.set_option('display.max_columns',None)
 pd.set_option('display.max_rows',None)
 pd.set_option('display.precision',3)
 
+"""
 # md.connect()
 
 # data = md.get_data("ANF")
@@ -151,26 +155,26 @@ pd.set_option('display.precision',3)
 # Testing finding data based on searches
 
 # Specifies which datapoints to include in output when get_investment_data is called
-datapoint_ids = [
-    {"datapointId": "OS01W"}, # Name
-    {"datapointId": "OS385"}, # Ticker
-    # {"datapointId": "LF035"}, # Group?
-    {
-        "datapointId": "HS05X",
-        "startDate": "2024-08-30",
-        "endDate": "2024-10-30"
-     }, # P/E
-    {
-        "datapointId": "HS05V",
-        "startDate": "2024-08-30",
-        "endDate": "2024-10-30"
-     }, # P/B
-    {
-        "datapointId": "HS05U",
-        "startDate": "2024-08-30",
-        "endDate": "2024-10-30"
-     }, # P/S
-]
+# datapoint_ids = [
+#     {"datapointId": "OS01W"}, # Name
+#     {"datapointId": "OS385"}, # Ticker
+#     # {"datapointId": "LF035"}, # Group?
+#     {
+#         "datapointId": "HS05X",
+#         "startDate": "2024-08-30",
+#         "endDate": "2024-10-30"
+#      }, # P/E
+#     {
+#         "datapointId": "HS05V",
+#         "startDate": "2024-08-30",
+#         "endDate": "2024-10-30"
+#      }, # P/B
+#     {
+#         "datapointId": "HS05U",
+#         "startDate": "2024-08-30",
+#         "endDate": "2024-10-30"
+#      }, # P/S
+# ]
 
 # 17 is my search criteria...18 is from Fall 2023
 # criteriaNum = int(input('\nPlease enter the number of the saved criteria you would like to use: ')) REACTIVATE
@@ -221,17 +225,45 @@ datapoint_ids = [
 
 # for fact in test2['facts']['us-gaap']:
 #     print(fact)
+"""
+
 def step_1():
+    # Get ticker to check
     userInput = input('Enter a ticker: ')
 
-    test = yf.Ticker(userInput).info
+    # Get P/E, P/B, and P/S needed
+    peRatio = float(input("Please enter the P/E threshold: "))
+    pbRatio = float(input("Please enter the P/B threshold: "))
+    psRatio = float(input("Please enter the P/S threshold: "))
 
-    pprint.pprint(test)
+    tickerInfo = yf.Ticker(userInput).info
+
+    # this line is meant to be used for checking what information the dictionary contains
+    # pprint.pprint(tickerInfo) 
 
     # sharePrice / trailingEPS
-    priceToEarnings = test['currentPrice'] / (test['trailingEps'])
+    priceToEarnings = tickerInfo['currentPrice'] / (tickerInfo['trailingEps'])
 
-    print('\n-----------------------------------------------------\nP/B Ratio: ' + str(test['priceToBook']) + "\nP/S Ratio: " + str(test['priceToSalesTrailing12Months']) + "\nP/E Ratio: " + str(priceToEarnings) + "\nEBITDA: " + str(test['ebitda']))
+    # Check if the ratios are met
+    if priceToEarnings <= peRatio: 
+        peRatioMet = True 
+    else:
+        peRatio = False 
+    if tickerInfo['priceToBook'] <= pbRatio:
+        pbRatioMet = True 
+    else: 
+        pbRatio = False 
+    if tickerInfo['priceToSalesTrailing12Months'] >= psRatio:
+        psRatioMet = True 
+    else: 
+        psRatio = False 
 
-step_1()
+    print('\n-----------------------------------------------------\n')
+    print(f'Current Price: {tickerInfo['currentPrice']}\n')
+    print("P/E Ratio: " + str(priceToEarnings) + "\t Does meet" if peRatioMet else "\t Does not meet")
+    print('P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t Does meet" if pbRatioMet else "\t\t Does not meet")
+    print("P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t Does meet" if psRatioMet else "\t\t Does not meet")
+    print(f"\nEBITDA: {tickerInfo['ebitda']:,}")
+
+
 step_1()
