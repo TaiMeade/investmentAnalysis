@@ -228,8 +228,14 @@ pd.set_option('display.precision',3)
 """
 
 """
-    This function corresponds to the first step in How To Research Stocks (provided by Brett Taylor).
+    This function corresponds to the first step "Screening for Securities" in How To Research Stocks (provided by Brett Taylor).
     
+    Specifications from document:
+        ○ Screening with Value Criteria
+        ○ Some other things to look for: 10/yr Revenue growth, Operating Profit Margin,
+        and Net Debt/EBITDA
+        ○ Use these factors to determine the health of the company
+
     Inputs: 
         tickerToCheck: str --> represents the ticker/symbol of the company the user would like to check
 
@@ -268,23 +274,29 @@ def step_1(tickerToCheck: str):
         psRatioMet = True 
 
     print('\n-----------------------------------------------------\n')
-    print(f'Company Name: {tickerInfo['longName']}')
-    print(f'Sector: {tickerInfo['sector']}')
-    print(f'Current Price: {tickerInfo['currentPrice']}\n')
+    print(f"Company Name: {tickerInfo['longName']}")
+    print(f"Sector: {tickerInfo['sector']}")
+    print(f"Current Price: {tickerInfo['currentPrice']}\n")
     
     # Ratios and whether or not they meet the criteria
     print("P/E Ratio: " + str(priceToEarnings) + "\t \u2713    Meets" if peRatioMet else "P/E Ratio: " + str(priceToEarnings) + "\t \u274C   Does not meet")
-    print('P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t \u2713    Meets" if pbRatioMet else 'P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t \u274C   Does not meet")
+    print("P/B Ratio: " + str(tickerInfo['priceToBook']) + "\t\t \u2713    Meets" if pbRatioMet else 'P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t \u274C   Does not meet")
     print("P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t \u2713    Meets" if psRatioMet else "P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t \u274C   Does not meet")
     
     # Revenue Growth, operatingMargins, EBITDA
-    print(f'\nRevenue Growth: {tickerInfo['revenueGrowth']}') # NOTE: Check if this is proper revenue growth metric referred to in document
-    print(f'Operating Margins: {tickerInfo['operatingMargins']}') # NOTE: Check if this is proper operating margins metric referred to in document
+    print(f"\nRevenue Growth: {tickerInfo['revenueGrowth']}") # NOTE: Check if this is proper revenue growth metric referred to in document
+    print(f"Operating Margins: {tickerInfo['operatingMargins']}") # NOTE: Check if this is proper operating margins metric referred to in document
     print(f"EBITDA: {tickerInfo['ebitda']:,}")
 
 """
-    This function corresponds to the second step in How To Research Stocks (provided by Brett Taylor).
+    This function corresponds to the second step "Understanding the business" in How To Research Stocks (provided by Brett Taylor).
     
+    Specifications from document:
+        ○ Any factors that will affect the company, what they do, how they do it, where they
+          do it.
+        ○ Look at the 10-K form/annual report, EDGAR in US
+        ○ Gather any important information that you can find
+
     Inputs: 
         tickerToCheck: str --> represents the ticker/symbol of the company the user would like to check
 
@@ -309,27 +321,86 @@ def step_2(tickerToCheck: str):
     motleyFoolURL = f'https://www.fool.com/quote/nasdaq/{tickerToCheck}/'
     wsjURL = f'https://www.wsj.com/market-data/quotes/{tickerToCheck.upper()}'
     tipRanksURL = f'https://www.tipranks.com/stocks/{tickerToCheck}/stock-news'
-    print('Some recent news:')
-    print(f'Yahoo Finance:                        {yfURL}')
-    print(f'CNBC:                                 {cnbcURL}')
-    print(f'MarketWatch:                          {marketWatchURL}')
-    print(f'NASDAQ:                               {nasdaqURL}')
-    print(f'Business Insider:                     {businessInsiderURL}')
-    print(f'Bloomberg:                            {bloombergURL}')
-    print(f'CNN:                                  {cnnURL}')
-    print(f'Robinhood:                            {robinhoodURL}')
-    print(f'Motley Fool:                          {motleyFoolURL}')
-    print(f'Wall Street Journal:                  {wsjURL}')
-    print(f'Tip Ranks:                            {tipRanksURL}\n') # \n because it is the last URL for the recent news
 
+    # Print the URLs for several websites
+    print('Some recent news:')
+    print(f"Yahoo Finance:                        {yfURL}")
+    print(f"CNBC:                                 {cnbcURL}")
+    print(f"MarketWatch:                          {marketWatchURL}")
+    print(f"NASDAQ:                               {nasdaqURL}")
+    print(f"Business Insider:                     {businessInsiderURL}")
+    print(f"Bloomberg:                            {bloombergURL}")
+    print(f"CNN:                                  {cnnURL}")
+    print(f"Robinhood:                            {robinhoodURL}")
+    print(f"Motley Fool:                          {motleyFoolURL}")
+    print(f"Wall Street Journal:                  {wsjURL}")
+    print(f"Tip Ranks:                            {tipRanksURL}\n") # \n because it is the last URL for the recent news
+
+    # Used to give the user a quick Google search to the EDGAR 10k report NOTE: may need to be rethought/optimized
     tickerInfo = yf.Ticker(tickerToCheck).info
-    searchFor10kURL = f'https://www.google.com/search?q=edgar+{tickerInfo['symbol']}+10k+recent'
+    searchFor10kURL = f"https://www.google.com/search?q=edgar+{tickerInfo['symbol']}+10k+recent"
     print(f'10K via EDGAR:                        {searchFor10kURL}') # not sure if this is worth doing
 
-    pass
+"""
+    This function corresponds to the third step "Understanding the Finances" in How To Research Stocks (provided by Brett Taylor).
+    
+    Specifications from document:
+        ○ Financial Position: solvency, liquidity, capital structure
+        ○ Growth rates: sales, costs, assets, liabilities, cash flows, share count
+        ○ Profit Margins
+        ○ Areas for improvement
+        ○ Look at income statements, balance sheets, and cash flow statements
+        ○ Cumulative Average Growth Rate (5, 10, 15 year period)
+        ○ Margins (gross, operating, net)
+        ○ Ratios (ROI’s, debt, efficiency, FCF conversion)
+        ○ Peer Analysis
+        ○ Look for any Red Flags
+        ○ Check for any adjusted accounting numbers
 
-def step_3():
-    pass
+    Inputs: 
+        tickerToCheck: str --> represents the ticker/symbol of the company the user would like to check
+
+    Returns/prints several URLs the user can view to see recent news regarding their particular stock.
+    Also returns a URL meant to assist in searching for the EDGAR 10-K form.
+
+    NOTE: How many of these things can actually be automated?  If it cannot be automated
+          our goal should be to provide links or ideas for things the user can look at/review
+"""
+def step_3(tickerToCheck: str):
+    # Financial Position: solvency, liquidity, capital structure
+
+
+    # Growth rates (sales, costs, assets, liabilities, cash flows, share count)
+
+
+    # Profit margins
+
+
+    # Areas for improvement (can this be calculated or is this based on personal review/analysis)
+
+
+    # Income statements, balance sheets, and cash flow statements
+
+
+    # Cumulative average growth rate (5, 10, 15 year period)
+
+
+    # Margins (gross, operating, and net)
+
+
+    # Ratios (ROI’s, debt, efficiency, FCF conversion)
+
+
+    # Peer Analyis (what is this exactly?)
+
+
+    # Check for red flags regarding the company (again...is this personal analysis?)
+
+
+    # Check for any adjusted accounting numbers
+
+
+    pass # temporary to allow running of program
 
 def main():
     userInput = input('Enter a ticker: ')
