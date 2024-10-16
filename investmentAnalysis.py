@@ -227,43 +227,118 @@ pd.set_option('display.precision',3)
 #     print(fact)
 """
 
-def step_1():
-    # Get ticker to check
-    userInput = input('Enter a ticker: ')
+"""
+    This function corresponds to the first step in How To Research Stocks (provided by Brett Taylor).
+    
+    Inputs: 
+        tickerToCheck: str --> represents the ticker/symbol of the company the user would like to check
+
+    Returns the Company Name, Sector, and Current Stock Price.
+    Checks value criteria (and screens based on inputs) and returns current ratios, as well as 
+    whether or not the criteria is met.
+    Also returns revenue growth, operating margins, and EBITDA.
+
+    NOTE: All information is provided via the yfinance module
+"""
+def step_1(tickerToCheck: str):
 
     # Get P/E, P/B, and P/S needed
     peRatio = float(input("Please enter the P/E threshold: "))
     pbRatio = float(input("Please enter the P/B threshold: "))
     psRatio = float(input("Please enter the P/S threshold: "))
 
-    tickerInfo = yf.Ticker(userInput).info
+    tickerInfo = yf.Ticker(tickerToCheck).info
 
     # this line is meant to be used for checking what information the dictionary contains
-    # pprint.pprint(tickerInfo) 
+    # pprint.pprint(tickerInfo)
 
     # sharePrice / trailingEPS
     priceToEarnings = tickerInfo['currentPrice'] / (tickerInfo['trailingEps'])
 
-    # Check if the ratios are met
+    # Initialize conditions to false
+    peRatioMet = False
+    pbRatioMet = False
+    psRatioMet = False
+    # Check if the ratios are met and change to true if they are
     if priceToEarnings <= peRatio: 
         peRatioMet = True 
-    else:
-        peRatio = False 
     if tickerInfo['priceToBook'] <= pbRatio:
         pbRatioMet = True 
-    else: 
-        pbRatio = False 
     if tickerInfo['priceToSalesTrailing12Months'] >= psRatio:
         psRatioMet = True 
-    else: 
-        psRatio = False 
 
     print('\n-----------------------------------------------------\n')
+    print(f'Company Name: {tickerInfo['longName']}')
+    print(f'Sector: {tickerInfo['sector']}')
     print(f'Current Price: {tickerInfo['currentPrice']}\n')
-    print("P/E Ratio: " + str(priceToEarnings) + "\t Does meet" if peRatioMet else "\t Does not meet")
-    print('P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t Does meet" if pbRatioMet else "\t\t Does not meet")
-    print("P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t Does meet" if psRatioMet else "\t\t Does not meet")
-    print(f"\nEBITDA: {tickerInfo['ebitda']:,}")
+    
+    # Ratios and whether or not they meet the criteria
+    print("P/E Ratio: " + str(priceToEarnings) + "\t \u2713    Meets" if peRatioMet else "P/E Ratio: " + str(priceToEarnings) + "\t \u274C   Does not meet")
+    print('P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t \u2713    Meets" if pbRatioMet else 'P/B Ratio: ' + str(tickerInfo['priceToBook']) + "\t\t \u274C   Does not meet")
+    print("P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t \u2713    Meets" if psRatioMet else "P/S Ratio: " + str(tickerInfo['priceToSalesTrailing12Months']) + "\t\t \u274C   Does not meet")
+    
+    # Revenue Growth, operatingMargins, EBITDA
+    print(f'\nRevenue Growth: {tickerInfo['revenueGrowth']}') # NOTE: Check if this is proper revenue growth metric referred to in document
+    print(f'Operating Margins: {tickerInfo['operatingMargins']}') # NOTE: Check if this is proper operating margins metric referred to in document
+    print(f"EBITDA: {tickerInfo['ebitda']:,}")
 
+"""
+    This function corresponds to the second step in How To Research Stocks (provided by Brett Taylor).
+    
+    Inputs: 
+        tickerToCheck: str --> represents the ticker/symbol of the company the user would like to check
 
-step_1()
+    Returns/prints several URLs the user can view to see recent news regarding their particular stock.
+    Also returns a URL meant to assist in searching for the EDGAR 10-K form.
+
+    NOTE: EDGAR 10-K form search query likely needs to be optimized
+"""
+def step_2(tickerToCheck: str):
+    # Separator
+    print('\n-----------------------------------------------------\n')
+
+    # return a URL in which the user can go to in order to view news associated with the ticker/symbol
+    yfURL = f'https://finance.yahoo.com/quote/{tickerToCheck.upper()}/news/'
+    cnbcURL = f'https://www.cnbc.com/quotes/{tickerToCheck.upper()}'
+    marketWatchURL = f'https://www.marketwatch.com/investing/stock/{tickerToCheck}'
+    nasdaqURL = f'https://www.nasdaq.com/market-activity/stocks/{tickerToCheck}'
+    businessInsiderURL = f'https://markets.businessinsider.com/stocks/{tickerToCheck}-stock#commodity-news'
+    bloombergURL = f'https://www.bloomberg.com/quote/{tickerToCheck.upper()}:US'
+    cnnURL = f'https://www.cnn.com/markets/stocks/{tickerToCheck.upper()}'
+    robinhoodURL = f'https://robinhood.com/us/en/stocks/{tickerToCheck.upper()}/'
+    motleyFoolURL = f'https://www.fool.com/quote/nasdaq/{tickerToCheck}/'
+    wsjURL = f'https://www.wsj.com/market-data/quotes/{tickerToCheck.upper()}'
+    tipRanksURL = f'https://www.tipranks.com/stocks/{tickerToCheck}/stock-news'
+    print('Some recent news:')
+    print(f'Yahoo Finance:                        {yfURL}')
+    print(f'CNBC:                                 {cnbcURL}')
+    print(f'MarketWatch:                          {marketWatchURL}')
+    print(f'NASDAQ:                               {nasdaqURL}')
+    print(f'Business Insider:                     {businessInsiderURL}')
+    print(f'Bloomberg:                            {bloombergURL}')
+    print(f'CNN:                                  {cnnURL}')
+    print(f'Robinhood:                            {robinhoodURL}')
+    print(f'Motley Fool:                          {motleyFoolURL}')
+    print(f'Wall Street Journal:                  {wsjURL}')
+    print(f'Tip Ranks:                            {tipRanksURL}\n') # \n because it is the last URL for the recent news
+
+    tickerInfo = yf.Ticker(tickerToCheck).info
+    searchFor10kURL = f'https://www.google.com/search?q=edgar+{tickerInfo['symbol']}+10k+recent'
+    print(f'10K via EDGAR:                        {searchFor10kURL}') # not sure if this is worth doing
+
+    pass
+
+def step_3():
+    pass
+
+def main():
+    userInput = input('Enter a ticker: ')
+
+    step_1(userInput)
+
+    step_2(userInput)
+
+    step_3()
+
+if __name__ == '__main__':
+    main()
